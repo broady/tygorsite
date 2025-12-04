@@ -28,10 +28,6 @@ body {
   justify-content: space-between;
 }
 
-.header-spacer {
-  flex: 1;
-}
-
 .header-nav {
   display: flex;
   align-items: center;
@@ -139,25 +135,15 @@ body {
   align-items: center;
 }
 
-.announcement-link {
-  margin-top: 32px;
-  font-size: 0.95rem;
-}
-
-.announcement-link a {
-  display: inline-block;
+.header-announcement {
   color: #666;
   text-decoration: none;
-  padding: 10px 20px;
-  border: 1px solid #ddd;
-  border-radius: 24px;
-  transition: all 0.15s ease;
+  font-size: 0.9rem;
+  transition: color 0.15s ease;
 }
 
-.announcement-link a:hover {
+.header-announcement:hover {
   color: #e07020;
-  border-color: #e07020;
-  background: rgba(224, 112, 32, 0.05);
 }
 
 .btn {
