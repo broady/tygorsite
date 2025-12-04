@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello tygor - tygor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../landing.css">
+  <link rel="stylesheet" href="../../blog.css">
+</head>
+<body>
+  <header class="blog-header">
+    <div class="container">
+      <div class="blog-brand">
+        <a href="/" class="blog-home">
+          <img src="../../tygor-tiger.svg" alt="" class="blog-tiger">
+          <img src="../../tygor-text.svg" alt="tygor" class="blog-logo">
+        </a>
+        <span class="blog-label">BLOG</span>
+      </div>
+      <a href="https://github.com/broady/tygor" class="btn-github" title="View on GitHub">
+        <svg viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main class="blog-content">
+    <article class="container">
+      <time class="post-date">December 4, 2025</time>
+      <h1>Hello tygor</h1>
+<p><strong>Type-Safe RPC from Go to TypeScript</strong></p>
+<p>I&#39;ve built the same mini-framework a dozen times. Wrap a Go function in something that speaks JSON on an http.Handler. On the browser side, I write a fetch wrapper and usually just hard-code the URL paths. I don&#39;t want to write schema files, just Go functions that TypeScript knows how to call.</p>
+<p>So I built tygor. It&#39;s early. It&#39;s changing a lot. I hope you&#39;ll try it. There&#39;s as much type-safety as I could reasonably manage.</p>
+<p>TypeScript is wonderful, and the npm ecosystem is strong. I&#39;m a fan of what folks are building: TanStack, Nuxt, Vite, Bun. But I trust myself to secure a Go backend. I don&#39;t really trust myself to secure a JS backend. Case in point, yesterday I and many others rushed to update and deploy our Next.js apps because of a severe remote execution security issue in React Server Components.</p>
+<hr>
+<p>Here&#39;s what it looks like. You write a handler:</p>
+<pre><code class="language-go">type GetMessageRequest struct {
+    ID string `json:&quot;id&quot;`
+}
+
+func GetMessage(ctx context.Context, req GetMessageRequest) (*Message, error) {
+    // ...
+}
+</code></pre>
+<p>Register it:</p>
+<pre><code class="language-go">func SetupApp() *tygor.App {
+    app := tygor.NewApp()
+
+    svc := app.Service(&quot;Message&quot;)
+    svc.Register(&quot;Set&quot;, tygor.Exec(SetMessage))  // Exec  -&gt; POST
+    svc.Register(&quot;Get&quot;, tygor.Query(GetMessage)) // Query -&gt; GET (cacheable)
+
+    return app
+}
+
+func main() {
+    // ...
+
+    if err := http.ListenAndServe(addr, SetupApp().Handler()); err != nil {
+        log.Fatal(err)
+    }
+}
+</code></pre>
+<p>Run <code>tygor gen</code>. Now in TypeScript:</p>
+<pre><code class="language-typescript">import { createClient, ServerError } from &quot;@tygor/client&quot;;
+import { registry } from &quot;./rpc/manifest&quot;;
+const client = createClient(registry, { baseUrl: &quot;/&quot; });
+
+const message = await client.Message.Get({ id: &quot;rawr&quot; });
+</code></pre>
+<p>That&#39;s it. The client knows the request shape, the response shape, and which HTTP method to use. Change the Go struct, regenerate, and the compiler tells you what broke. Use the Vite plugin or any file watcher to re-generate. There&#39;s a <code>tygor check</code> command for CI to ensure you&#39;re in sync.</p>
+<p>The generator precisely follows <code>encoding/json</code> semantics. Everything is mapped: struct tags, <code>omitempty</code>, embedded fields, anonymous structs. The TypeScript types match what your JSON actually looks like.</p>
+<p>Tygor manages your routes, handles serialization, and uses the right HTTP methods. The framework itself is quite small and should feel familiar to any Go developer who works with net/http. Most of the complexity and value in tygor is in the type generator and tooling.</p>
+<p><code>tygor gen</code> outputs TypeScript types, zod schemas (or zod-mini), and a Discovery doc (a JSON specification of your routes and types). The generator architecture supports multiple output plugins. Configure it with flags or Go code.</p>
+<p>There are existing solutions in the Go/TypeScript type generation landscape: tygo is a fantastic tool, and guts is another impressive project. But shared struct types alone still leave you wiring up the calls. I want the full tRPC experience for Go.</p>
+<p>Inspired by tRPC, TanStack, and Elysia, I built a Vite plugin for local dev. It watches Go files, rebuilds, regenerates types, and hot reloads. Build errors show in the browser. If the build fails or the new server won&#39;t start, the existing server keeps running. Your frontend state survives server restarts.</p>
+<hr>
+<p>Looking beyond unary RPC, I&#39;ve been working on streaming primitives for tygor. <code>Atom</code> gives you observable single values. <code>Stream</code> gives you server-sent events (SSE). Same type safety, same client.</p>
+<p>These are fairly experimental but open up simple, powerful ways to synchronize state. They&#39;re designed to work well with React, Svelte, SolidJS, Vue, etc. I hope to generate helper libraries for TanStack Query and each framework. I&#39;m really liking how tygor works with SolidJS so far:</p>
+<pre><code class="language-typescript">const atom = useAtom(client.Message.State);
+
+&lt;div&gt;{atom().status}&lt;/div&gt; // connection status
+&lt;Show when={atom().data}&gt;
+  {(data) =&gt; (
+    &lt;div&gt;
+      &lt;div&gt;{data().message}&lt;/div&gt;
+    &lt;/div&gt;
+  )}
+&lt;/Show&gt;
+</code></pre>
+<pre><code class="language-go">// Atom holding message state - subscribers get current value and updates
+var messageAtom = tygor.NewAtom(&amp;MessageState{
+    Message:  &quot;hello&quot;,
+})
+
+// Register with: svc.Register(&quot;State&quot;, messageAtom.Handler())
+</code></pre>
+<hr>
+<p>Validation tags drive Go-side validation and generate Zod schemas. Add <code>validate:&quot;required,email&quot;</code> to a field and the generator produces a matching schema.</p>
+<p>Configure the generated output, including custom type mapping (for example, if you have types with custom <code>MarshalJSON</code> methods).</p>
+<pre><code class="language-go">func GenConfig(g *tygorgen.Generator) *tygorgen.Generator {
+    return g.
+        EnumStyle(&quot;union&quot;).
+        OptionalType(&quot;undefined&quot;).
+        WithDiscovery().
+        WithFlavor(tygorgen.FlavorZod)
+}
+</code></pre>
+<p>The client may validate requests before they leave, responses when they arrive, or both. It supports Standard Schema, I&#39;m looking at generating other client validators like ArkType.</p>
+<pre><code class="language-typescript">import { registry } from &quot;./rpc/manifest&quot;;
+import { schemaMap } from &quot;./rpc/schemas.map.zod&quot;;
+
+const client = createClient(registry, {
+  schemas: schemaMap,
+  validate: { request: true },
+});
+</code></pre>
+<hr>
+<p>Next up: dogfooding with real applications, building out documentation and examples, and refining the API.</p>
+<p>On the feature roadmap: bidirectional streaming via WebSockets, and a big focus on in-browser devtools. Inspecting RPCs and data flows without adding special instrumentation is a dream.</p>
+<p>The project is moving fast and the API is still changing. Please try it and give me feedback. Check out the <a href="https://github.com/broady/tygor">GitHub</a>.</p>
+
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><a href="https://github.com/broady/tygor">GitHub</a> &middot; <a href="https://github.com/broady/tygor/blob/main/LICENSE">MIT License</a></p>
+    </div>
+  </footer>
+</body>
+</html>

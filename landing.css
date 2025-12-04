@@ -17,9 +17,42 @@ body {
   padding: 0 24px;
 }
 
+/* Site header */
+.site-header {
+  padding: 20px 0;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-spacer {
+  flex: 1;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.header-nav > a:not(.btn-github) {
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.15s ease;
+}
+
+.header-nav > a:not(.btn-github):hover {
+  color: #e07020;
+}
+
 /* Hero */
 .hero {
-  padding: 64px 0 80px;
+  padding: 40px 0 80px;
   text-align: center;
 }
 
@@ -139,6 +172,25 @@ body {
 .btn-secondary:hover {
   background: #f8f8f8;
   border-color: #ccc;
+}
+
+.btn-github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #555;
+  background: transparent;
+  border: 1.5px solid #ddd;
+  transition: all 0.15s ease;
+}
+
+.btn-github:hover {
+  background: #24292e;
+  border-color: #24292e;
+  color: white;
 }
 
 /* Feature sections */
@@ -492,7 +544,7 @@ footer a:hover {
   }
 
   .hero {
-    padding: 60px 0 50px;
+    padding: 24px 0 50px;
   }
 
   .hero-branding {

@@ -1,0 +1,283 @@
+/* Blog header */
+.blog-header {
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(180, 140, 100, 0.15);
+}
+
+.blog-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.blog-home {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.blog-tiger {
+  width: 36px;
+  height: 36px;
+}
+
+.blog-logo {
+  height: 28px;
+  width: auto;
+}
+
+.blog-header .btn-github {
+  width: 40px;
+  height: 40px;
+}
+
+.blog-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.blog-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #e07020;
+  position: relative;
+  top: 2px;
+}
+
+/* Blog index */
+.blog-index {
+  padding-top: 24px;
+}
+
+.blog-index article {
+  max-width: none;
+}
+
+.blog-content .blog-index-heading {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin: 0 0 24px 0;
+}
+
+.blog-content .blog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-list li {
+  margin-bottom: 16px;
+}
+
+.blog-list a {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.post-subline {
+  display: block;
+  font-size: 1rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.post-date {
+  display: block;
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 8px;
+}
+
+/* Blog content */
+.blog-content {
+  padding: 60px 0 100px;
+}
+
+.blog-content article {
+  max-width: 800px;
+}
+
+/* Post page: use flex to reorder date after title/subline */
+.blog-content article:has(> .post-date) {
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-content article > .post-date {
+  order: 3;
+  margin-bottom: 32px;
+}
+
+.blog-content article > h1 {
+  order: 1;
+}
+
+.blog-content article > h1 + p {
+  order: 2;
+}
+
+.blog-content article > *:not(.post-date):not(h1):not(h1 + p) {
+  order: 4;
+}
+
+.blog-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+/* Subline: paragraph with only a strong child after h1 */
+.blog-content h1 + p:has(> strong:only-child) {
+  margin-bottom: 0;
+}
+
+.blog-content h1 + p > strong:only-child {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2a2a2a;
+  margin: 48px 0 20px;
+  line-height: 1.3;
+}
+
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2a2a2a;
+  margin: 32px 0 16px;
+}
+
+.blog-content p {
+  font-size: 1.125rem;
+  color: #3a3a3a;
+  margin-bottom: 20px;
+  line-height: 1.75;
+}
+
+.blog-content a {
+  color: #e07020;
+  text-decoration: none;
+}
+
+.blog-content a:hover {
+  text-decoration: underline;
+}
+
+.blog-content hr {
+  border: none;
+  border-top: 1px solid rgba(180, 140, 100, 0.2);
+  margin: 48px 0;
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 0 0 20px 24px;
+  font-size: 1.125rem;
+  color: #3a3a3a;
+  line-height: 1.75;
+}
+
+.blog-content li {
+  margin-bottom: 8px;
+}
+
+/* Inline code */
+.blog-content code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(224, 112, 32, 0.1);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #c86318;
+  border: 1px solid rgba(224, 112, 32, 0.12);
+}
+
+/* Code blocks */
+.blog-content pre {
+  background: #2d2620;
+  border-radius: 12px;
+  padding: 24px;
+  overflow-x: auto;
+  margin: 24px 0;
+  border: 1px solid rgba(180, 140, 100, 0.2);
+}
+
+.blog-content pre code {
+  background: none;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  color: #f0e6dc;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Blockquotes */
+.blog-content blockquote {
+  border-left: 3px solid #e07020;
+  margin: 24px 0;
+  padding: 12px 24px;
+  background: rgba(224, 112, 32, 0.05);
+  border-radius: 0 8px 8px 0;
+}
+
+.blog-content blockquote p {
+  margin: 0;
+  color: #555;
+  font-style: italic;
+}
+
+/* Images */
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 24px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blog-content {
+    padding: 40px 0 60px;
+  }
+
+  .blog-content h1 {
+    font-size: 2rem;
+  }
+
+  .blog-content h2 {
+    font-size: 1.375rem;
+  }
+
+  .blog-content p,
+  .blog-content ul,
+  .blog-content ol {
+    font-size: 1.05rem;
+  }
+
+  .blog-content pre {
+    padding: 16px;
+    border-radius: 8px;
+    margin: 20px -24px;
+    border-radius: 0;
+  }
+
+  .blog-content pre code {
+    font-size: 0.875rem;
+  }
+}
