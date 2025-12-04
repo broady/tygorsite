@@ -138,12 +138,17 @@ body {
 .header-announcement {
   color: #666;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.15s ease;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  transition: all 0.15s ease;
 }
 
 .header-announcement:hover {
   color: #e07020;
+  border-color: #e07020;
+  background: rgba(224, 112, 32, 0.05);
 }
 
 .btn {
