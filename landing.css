@@ -145,13 +145,19 @@ body {
 }
 
 .announcement-link a {
-  color: #888;
+  display: inline-block;
+  color: #666;
   text-decoration: none;
-  transition: color 0.15s ease;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  transition: all 0.15s ease;
 }
 
 .announcement-link a:hover {
   color: #e07020;
+  border-color: #e07020;
+  background: rgba(224, 112, 32, 0.05);
 }
 
 .btn {
