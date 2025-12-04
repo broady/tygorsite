@@ -1,8 +1,22 @@
 import { marked } from "marked";
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { createHash } from "crypto";
 import { dirname, join } from "path";
 
 const BLOG_DIR = join(import.meta.dirname, "blog");
+const ROOT_DIR = import.meta.dirname;
+
+// Generate cache bust hash from CSS files
+function getCacheBust(): string {
+  const cssFiles = ["landing.css", "blog.css"];
+  const hash = createHash("md5");
+  for (const file of cssFiles) {
+    hash.update(readFileSync(join(ROOT_DIR, file)));
+  }
+  return hash.digest("hex").slice(0, 8);
+}
+
+const CACHE_BUST = getCacheBust();
 
 interface BlogPost {
   slug: string;
@@ -52,8 +66,8 @@ function generatePostHTML(post: BlogPost, content: string): string {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../landing.css">
-  <link rel="stylesheet" href="../../blog.css">
+  <link rel="stylesheet" href="../../landing.css?v=${CACHE_BUST}">
+  <link rel="stylesheet" href="../../blog.css?v=${CACHE_BUST}">
 </head>
 <body>
   ${blogHeader(2)}
@@ -95,8 +109,8 @@ function generateIndexHTML(posts: BlogPost[]): string {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../landing.css">
-  <link rel="stylesheet" href="../blog.css">
+  <link rel="stylesheet" href="../landing.css?v=${CACHE_BUST}">
+  <link rel="stylesheet" href="../blog.css?v=${CACHE_BUST}">
 </head>
 <body>
   ${blogHeader(1)}
@@ -137,5 +151,15 @@ for (const post of posts) {
 mkdirSync(BLOG_DIR, { recursive: true });
 writeFileSync(join(BLOG_DIR, "index.html"), generateIndexHTML(posts));
 console.log("Built: /blog/");
+
+// Update cache bust in main index.html
+const indexPath = join(ROOT_DIR, "index.html");
+let indexHtml = readFileSync(indexPath, "utf-8");
+indexHtml = indexHtml.replace(
+  /href="landing\.css(\?v=[a-f0-9]+)?"/,
+  `href="landing.css?v=${CACHE_BUST}"`
+);
+writeFileSync(indexPath, indexHtml);
+console.log(`Updated: /index.html (cache bust: ${CACHE_BUST})`);
 
 console.log("Done!");
