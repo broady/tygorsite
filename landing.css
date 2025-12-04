@@ -139,6 +139,21 @@ body {
   align-items: center;
 }
 
+.announcement-link {
+  margin-top: 32px;
+  font-size: 0.95rem;
+}
+
+.announcement-link a {
+  color: #888;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.announcement-link a:hover {
+  color: #e07020;
+}
+
 .btn {
   border-radius: 8px;
   font-weight: 600;
