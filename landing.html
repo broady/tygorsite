@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tygor - Type-safe RPC for Go</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-branding">
+        <img src="tygor-tiger.svg" alt="" class="hero-tiger">
+        <img src="tygor-text.svg" alt="tygor" class="hero-logo">
+      </div>
+      <h1 class="headline">Type-safe Go backend for web apps</h1>
+      <p class="tagline">Write Go functions, call them from TypeScript with full autocomplete. No IDL required. Standard HTTP/JSON.</p>
+      <div class="cta-buttons">
+        <a href="#get-started" class="btn btn-primary">Get Started &rarr;</a>
+        <a href="https://github.com/broady/tygor/tree/main/examples" class="btn btn-secondary">Browse Examples</a>
+      </div>
+      <div class="compat">
+        <span class="compat-label">Works with</span>
+        <span class="compat-badges">
+          <a href="https://github.com/broady/tygor/tree/main/examples/react" target="_blank">Vite</a>
+          <a href="https://github.com/broady/tygor/tree/main/examples/react" target="_blank">React</a>
+          <a href="https://github.com/broady/tygor/tree/main/examples/starter-solid" target="_blank">Solid</a>
+          <span>Vue</span>
+          <a href="https://github.com/broady/tygor/tree/main/examples/with-sqlc" target="_blank">sqlc</a>
+          <a href="https://github.com/broady/tygor/tree/main/examples/zod" target="_blank">Zod</a>
+          <a href="https://github.com/broady/tygor/tree/main/examples/react" target="_blank">SSE</a>
+          <a href="https://github.com/broady/tygor/tree/main/examples/protobuf" target="_blank">Protobuf</a>
+        </span>
+      </div>
+    </section>
+  </div>
+
+  <div class="container">
+    <!-- Feature 1: Type-safe client -->
+    <section class="feature">
+      <div class="feature-content">
+        <h2>Stop keeping types in sync manually</h2>
+        <p>You've kept Go structs and TypeScript types in sync by hand. Or used OpenAPI codegen that's slow and generates ugly types. Or wished tRPC worked with Go backends.</p>
+        <p>Your Go structs become your TypeScript types. Automatically. No drift.</p>
+      </div>
+      <div class="feature-video">
+        <video autoplay loop muted playsinline>
+          <source src="EmbedTypeSafeClient.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <!-- Feature 2: Go code -->
+    <section class="feature">
+      <div class="feature-content">
+        <h2>Go structs are your schema</h2>
+        <p>No protobuf. No OpenAPI yaml. No IDL. Just write Go functions with struct parameters. tygor reads your code and generates TypeScript types with Zod schemas for runtime validation.</p>
+        <p>Validate tags like <code>validate:"min=3"</code> become <code>z.string().min(3)</code>. All the good stuff included.</p>
+      </div>
+      <div class="feature-video">
+        <video autoplay loop muted playsinline>
+          <source src="EmbedGoCode.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <!-- Feature 3: Hot reload -->
+    <section class="feature">
+      <div class="feature-content">
+        <h2>Hot reload with zero-downtime swaps</h2>
+        <p>The Vite plugin hot-reloads your Go server. Change a Go file, save, see the update instantly.</p>
+        <p>Go build errors appear in your browser. No terminal watching required.</p>
+      </div>
+      <div class="feature-video">
+        <video autoplay loop muted playsinline>
+          <source src="EmbedGenerateTypes.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <!-- Feature 3b: Vite plugin -->
+    <section class="feature">
+      <div class="feature-content">
+        <h2>Errors in your browser, not your terminal</h2>
+        <p>Go build errors and RPC failures show up in the Vite error overlay. Full stack traces with file paths and line numbers. Same UX you get for frontend errors, but for your backend.</p>
+        <p>During rebuilds, requests automatically route to the last working server. Your frontend doesn't break every time you save.</p>
+      </div>
+      <div class="feature-video screenshot">
+        <img src="devtools.png" alt="tygor devtools showing Go build errors in browser">
+      </div>
+    </section>
+
+    <!-- Feature 4: Standard HTTP -->
+    <section class="feature">
+      <div class="feature-content">
+        <h2>Standard HTTP/JSON. No magic.</h2>
+        <p>No custom wire protocols. No proprietary serialization. Just HTTP with JSON bodies. Debug with <code>curl</code>. Inspect in DevTools. Simple, auditable, boring.</p>
+        <p>Your API works with any HTTP client. The tygor client is optional convenience.</p>
+      </div>
+      <div class="feature-video">
+        <video autoplay loop muted playsinline>
+          <source src="EmbedStandardHTTP.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <!-- Comparison table -->
+    <section class="comparison">
+      <h2>How tygor compares</h2>
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>tygor</th>
+              <th>tRPC</th>
+              <th>OpenAPI</th>
+              <th>gRPC/Connect</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Backend</td>
+              <td class="highlight">Go</td>
+              <td>TypeScript</td>
+              <td>Any</td>
+              <td>Any</td>
+            </tr>
+            <tr>
+              <td>Schema</td>
+              <td class="highlight">Code-first</td>
+              <td>Code-first</td>
+              <td>Spec-first</td>
+              <td>Spec-first</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="comparison-note">Already have a Go API? tygor works incrementally. Add it to one endpoint, see if you like it.</p>
+    </section>
+  </div>
+
+  <section id="get-started" class="install">
+    <div class="container">
+      <h2>Get started</h2>
+      <div class="install-options">
+        <div class="install-option">
+          <h3>New project (Vite, SolidJS)</h3>
+          <div class="install-code">
+            <span class="prompt">$</span>bunx degit broady/tygor/examples/starter-solid#v0.8.2 my-app<br>
+            <span class="prompt">$</span>cd my-app && bun i && bun dev
+          </div>
+        </div>
+        <div class="install-option">
+          <h3>With sqlc (SQLite)</h3>
+          <div class="install-code">
+            <span class="prompt">$</span>bunx degit broady/tygor/examples/with-sqlc#v0.8.2 my-app<br>
+            <span class="prompt">$</span>cd my-app && bun i && bun dev
+          </div>
+          <p class="install-note">Type-safe from SQL to browser</p>
+        </div>
+      </div>
+      <p class="install-docs"><a href="https://github.com/broady/tygor#readme">Read the docs &rarr;</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p><a href="https://github.com/broady/tygor">GitHub</a> &middot; <a href="https://github.com/broady/tygor/blob/main/LICENSE">MIT License</a></p>
+    </div>
+  </footer>
+</body>
+</html>
