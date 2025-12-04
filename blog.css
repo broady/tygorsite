@@ -100,7 +100,7 @@
 }
 
 .blog-content article {
-  max-width: 800px;
+  max-width: 900px;
 }
 
 /* Post page: use flex to reorder date after title/subline */
