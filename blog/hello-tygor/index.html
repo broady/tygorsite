@@ -112,7 +112,7 @@ var messageAtom = tygor.NewAtom(&amp;MessageState{
 // Register with: svc.Register(&quot;State&quot;, messageAtom.Handler())
 </code></pre>
 <h2>Validation</h2>
-<p>Validation tags drive Go-side validation and generate Zod schemas. Add <code>validate:&quot;required,email&quot;</code> to a field and the generator produces a matching schema.</p>
+<p>Validation tags drive Go-side validation and generate Zod<sup><a id="footnote-ref-5" href="#footnote-5" data-footnote-ref aria-describedby="footnote-label">4</a></sup> schemas. Add <code>validate:&quot;required,email&quot;</code> to a field and the generator produces a matching schema.</p>
 <pre><code class="language-go">type CreateUserRequest struct {
     Email string `json:&quot;email&quot; validate:&quot;required,email&quot;`
     Age   int    `json:&quot;age&quot;   validate:&quot;gte=13&quot;`
@@ -133,7 +133,7 @@ z.object({
         WithFlavor(tygorgen.FlavorZod)
 }
 </code></pre>
-<p>The client may validate requests before they leave, responses when they arrive, or both. It supports Standard Schema<sup><a id="footnote-ref-4" href="#footnote-4" data-footnote-ref aria-describedby="footnote-label">4</a></sup>, and I&#39;m looking at generating other client validators like ArkType.</p>
+<p>The client may validate requests before they leave, responses when they arrive, or both. It supports Standard Schema<sup><a id="footnote-ref-4" href="#footnote-4" data-footnote-ref aria-describedby="footnote-label">5</a></sup>, and I&#39;m looking at generating other client validators like ArkType.</p>
 <pre><code class="language-typescript">import { registry } from &quot;./rpc/manifest&quot;;
 import { schemaMap } from &quot;./rpc/schemas.map.zod&quot;;
 
@@ -158,6 +158,9 @@ const client = createClient(registry, {
 </li>
 <li id="footnote-3">
 <p><a href="https://github.com/coder/guts">guts</a> - Go to TypeScript generator from the Coder team <a href="#footnote-ref-3" data-footnote-backref aria-label="Back to reference 3">↩</a></p>
+</li>
+<li id="footnote-5">
+<p><a href="https://zod.dev">Zod</a> - TypeScript-first schema validation <a href="#footnote-ref-5" data-footnote-backref aria-label="Back to reference 5">↩</a></p>
 </li>
 <li id="footnote-4">
 <p><a href="https://standardschema.dev">Standard Schema</a> - A common interface for TypeScript validation libraries <a href="#footnote-ref-4" data-footnote-backref aria-label="Back to reference 4">↩</a></p>
