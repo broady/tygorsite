@@ -36,10 +36,9 @@
 <blockquote>
 <p><strong>TL;DR:</strong> Write Go functions, call them from TypeScript with full type safety. No schema files. Validation tags on Go structs generate matching Zod schemas. Change a field, regenerate, the compiler tells you what broke.</p>
 </blockquote>
-<hr>
 <p>I&#39;ve built the same mini-framework a dozen times. Wrap a Go function in something that speaks JSON on an http.Handler. On the browser side, I write a fetch wrapper and usually just hard-code the URL paths. I don&#39;t want to write schema files, just Go functions that TypeScript knows how to call.</p>
 <p>So I built tygor. It&#39;s early. It&#39;s changing a lot. I hope you&#39;ll try it. There&#39;s as much type-safety as I could reasonably manage.</p>
-<p>TypeScript is wonderful, and the npm ecosystem is strong. I&#39;m a fan of what folks are building: TanStack, Nuxt, Vite, Bun. But I trust myself to secure a Go backend. I don&#39;t really trust myself to secure a JS backend. Case in point, yesterday I and many others rushed to update and deploy our Next.js apps because of a severe remote execution security issue in React Server Components.</p>
+<p>TypeScript is wonderful, and the npm ecosystem is strong. I&#39;m a fan of what folks are building: TanStack, Nuxt, Astro, Vite, Bun. But I trust myself to secure a Go backend. I don&#39;t really trust myself to secure a JS backend. Case in point, yesterday I and many others rushed to update and deploy our Next.js apps because of a severe remote execution security issue in React Server Components[^1].</p>
 <h2>What It Looks Like</h2>
 <p>Here&#39;s what it looks like. You write a handler:</p>
 <pre><code class="language-go">type GetMessageRequest struct {
@@ -81,7 +80,7 @@ const message = await client.Message.Get({ id: &quot;rawr&quot; });
 <p>The generator precisely follows <code>encoding/json</code> semantics. Everything is mapped: struct tags, <code>omitempty</code>, embedded fields, anonymous structs. The TypeScript types match what your JSON actually looks like.</p>
 <p>Tygor manages your routes, handles serialization, and uses the right HTTP methods. The framework itself is quite small and should feel familiar to any Go developer who works with net/http. Most of the complexity and value in tygor is in the type generator and tooling.</p>
 <p><code>tygor gen</code> outputs TypeScript types, zod schemas (or zod-mini), and a Discovery doc (a JSON specification of your routes and types). The generator architecture supports multiple output plugins. Configure it with flags or Go code.</p>
-<p>There are existing solutions in the Go/TypeScript type generation landscape: tygo is a fantastic tool, and guts is another impressive project. But shared struct types alone still leave you wiring up the calls. I want the full tRPC experience for Go.</p>
+<p>There are existing solutions in the Go/TypeScript type generation landscape: tygo[^2] is a fantastic tool, and guts[^3] is another impressive project. But shared struct types alone still leave you wiring up the calls. I want the full tRPC experience for Go.</p>
 <p>Inspired by tRPC, TanStack, and Elysia, I built a Vite plugin for local dev. It watches Go files, rebuilds, regenerates types, and hot reloads. Build errors show in the browser. If the build fails or the new server won&#39;t start, the existing server keeps running. Your frontend state survives server restarts.</p>
 <h2>Streaming</h2>
 <p>Looking beyond unary RPC, I&#39;ve been working on streaming primitives for tygor. <code>Atom</code> gives you observable single values. <code>Stream</code> gives you server-sent events (SSE). Same type safety, same client.</p>
@@ -134,7 +133,7 @@ z.object({
         WithFlavor(tygorgen.FlavorZod)
 }
 </code></pre>
-<p>The client may validate requests before they leave, responses when they arrive, or both. It supports Standard Schema, I&#39;m looking at generating other client validators like ArkType.</p>
+<p>The client may validate requests before they leave, responses when they arrive, or both. It supports Standard Schema[^4], and I&#39;m looking at generating other client validators like ArkType.</p>
 <pre><code class="language-typescript">import { registry } from &quot;./rpc/manifest&quot;;
 import { schemaMap } from &quot;./rpc/schemas.map.zod&quot;;
 
@@ -147,6 +146,11 @@ const client = createClient(registry, {
 <p>Next up: dogfooding with real applications, building out documentation and examples, and refining the API.</p>
 <p>On the feature roadmap: bidirectional streaming via WebSockets, and a big focus on in-browser devtools. Inspecting RPCs and data flows without adding special instrumentation is a dream.</p>
 <p>The project is moving fast and the API is still changing. Please try it and give me feedback. Check out the <a href="https://github.com/broady/tygor">GitHub</a>.</p>
+<hr>
+<p>[^1]: <a href="https://react.dev/blog/2025/12/03/critical-security-vulnerability-in-react-server-components">CVE-2025-55182</a> - Critical RCE vulnerability in React Server Components, CVSS 10.0
+[^2]: <a href="https://github.com/gzuidhof/tygo">tygo</a> - Generate TypeScript types from Go source code
+[^3]: <a href="https://github.com/coder/guts">guts</a> - Go to TypeScript generator from the Coder team
+[^4]: <a href="https://standardschema.dev">Standard Schema</a> - A common interface for TypeScript validation libraries</p>
 
     </article>
   </main>
