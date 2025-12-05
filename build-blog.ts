@@ -31,7 +31,7 @@ const posts: BlogPost[] = [
     slug: "hello-tygor",
     title: "Hello tygor",
     subline: "Type-Safe RPC from Go to TypeScript",
-    date: "December 4, 2025",
+    date: "Draft, planned to publish soon",
     sourcePath: join(import.meta.dirname, "..", "..", "BLOG_01.md"),
   },
 ];
