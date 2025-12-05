@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "marked": "^15.0.0"
+  },
+  "dependencies": {
+    "marked-footnote": "^1.4.0"
   }
 }

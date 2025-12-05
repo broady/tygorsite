@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "tygor-website",
+      "dependencies": {
+        "marked-footnote": "^1.4.0",
+      },
       "devDependencies": {
         "marked": "^15.0.0",
       },
@@ -11,5 +14,7 @@
   },
   "packages": {
     "marked": ["marked@15.0.12", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-8dD6FusOQSrpv9Z1rdNMdlSgQOIP880DHqnohobOmYLElGEqAL/JvxvuxZO16r4HtjTlfPRDC1hbvxC9dPN2nA=="],
+
+    "marked-footnote": ["marked-footnote@1.4.0", "", { "peerDependencies": { "marked": ">=7.0.0" } }, "sha512-fZTxAhI1TcLEs5UOjCfYfTHpyKGaWQevbxaGTEA68B51l7i87SctPFtHETYqPkEN0ka5opvy4Dy1l/yXVC+hmg=="],
   }
 }

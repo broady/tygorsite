@@ -1,10 +1,13 @@
 import { marked } from "marked";
+import markedFootnote from "marked-footnote";
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { createHash } from "crypto";
 import { dirname, join } from "path";
 
 const BLOG_DIR = join(import.meta.dirname, "blog");
 const ROOT_DIR = import.meta.dirname;
+
+marked.use(markedFootnote());
 
 // Generate cache bust hash from CSS files
 function getCacheBust(): string {
