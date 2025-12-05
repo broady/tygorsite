@@ -33,10 +33,14 @@
       <time class="post-date">December 4, 2025</time>
       <h1>Hello tygor</h1>
 <p><strong>Type-Safe RPC from Go to TypeScript</strong></p>
+<blockquote>
+<p><strong>TL;DR:</strong> Write Go functions, call them from TypeScript with full type safety. No schema files. Validation tags on Go structs generate matching Zod schemas. Change a field, regenerate, the compiler tells you what broke.</p>
+</blockquote>
+<hr>
 <p>I&#39;ve built the same mini-framework a dozen times. Wrap a Go function in something that speaks JSON on an http.Handler. On the browser side, I write a fetch wrapper and usually just hard-code the URL paths. I don&#39;t want to write schema files, just Go functions that TypeScript knows how to call.</p>
 <p>So I built tygor. It&#39;s early. It&#39;s changing a lot. I hope you&#39;ll try it. There&#39;s as much type-safety as I could reasonably manage.</p>
 <p>TypeScript is wonderful, and the npm ecosystem is strong. I&#39;m a fan of what folks are building: TanStack, Nuxt, Vite, Bun. But I trust myself to secure a Go backend. I don&#39;t really trust myself to secure a JS backend. Case in point, yesterday I and many others rushed to update and deploy our Next.js apps because of a severe remote execution security issue in React Server Components.</p>
-<hr>
+<h2>What It Looks Like</h2>
 <p>Here&#39;s what it looks like. You write a handler:</p>
 <pre><code class="language-go">type GetMessageRequest struct {
     ID string `json:&quot;id&quot;`
@@ -73,14 +77,23 @@ const client = createClient(registry, { baseUrl: &quot;/&quot; });
 const message = await client.Message.Get({ id: &quot;rawr&quot; });
 </code></pre>
 <p>That&#39;s it. The client knows the request shape, the response shape, and which HTTP method to use. Change the Go struct, regenerate, and the compiler tells you what broke. Use the Vite plugin or any file watcher to re-generate. There&#39;s a <code>tygor check</code> command for CI to ensure you&#39;re in sync.</p>
+<h2>The Generator</h2>
 <p>The generator precisely follows <code>encoding/json</code> semantics. Everything is mapped: struct tags, <code>omitempty</code>, embedded fields, anonymous structs. The TypeScript types match what your JSON actually looks like.</p>
 <p>Tygor manages your routes, handles serialization, and uses the right HTTP methods. The framework itself is quite small and should feel familiar to any Go developer who works with net/http. Most of the complexity and value in tygor is in the type generator and tooling.</p>
 <p><code>tygor gen</code> outputs TypeScript types, zod schemas (or zod-mini), and a Discovery doc (a JSON specification of your routes and types). The generator architecture supports multiple output plugins. Configure it with flags or Go code.</p>
 <p>There are existing solutions in the Go/TypeScript type generation landscape: tygo is a fantastic tool, and guts is another impressive project. But shared struct types alone still leave you wiring up the calls. I want the full tRPC experience for Go.</p>
 <p>Inspired by tRPC, TanStack, and Elysia, I built a Vite plugin for local dev. It watches Go files, rebuilds, regenerates types, and hot reloads. Build errors show in the browser. If the build fails or the new server won&#39;t start, the existing server keeps running. Your frontend state survives server restarts.</p>
-<hr>
+<h2>Streaming</h2>
 <p>Looking beyond unary RPC, I&#39;ve been working on streaming primitives for tygor. <code>Atom</code> gives you observable single values. <code>Stream</code> gives you server-sent events (SSE). Same type safety, same client.</p>
-<p>These are fairly experimental but open up simple, powerful ways to synchronize state. They&#39;re designed to work well with React, Svelte, SolidJS, Vue, etc. I hope to generate helper libraries for TanStack Query and each framework. I&#39;m really liking how tygor works with SolidJS so far:</p>
+<p>These are fairly experimental but open up simple, powerful ways to synchronize state. They&#39;re designed to work well with React, Svelte, SolidJS, Vue, etc. I hope to generate helper libraries for TanStack Query and each framework.</p>
+<p>Streams implement <code>AsyncIterable</code>, so you can consume them directly:</p>
+<pre><code class="language-typescript">const stream = client.Activity.Events({ userId: &quot;123&quot; });
+
+for await (const event of stream) {
+  console.log(event.type, event.payload);
+}
+</code></pre>
+<p>For reactive frameworks, use the subscribe/getSnapshot pattern. I&#39;m really liking how tygor works with SolidJS so far:</p>
 <pre><code class="language-typescript">const atom = useAtom(client.Message.State);
 
 &lt;div&gt;{atom().status}&lt;/div&gt; // connection status
@@ -99,8 +112,19 @@ var messageAtom = tygor.NewAtom(&amp;MessageState{
 
 // Register with: svc.Register(&quot;State&quot;, messageAtom.Handler())
 </code></pre>
-<hr>
+<h2>Validation</h2>
 <p>Validation tags drive Go-side validation and generate Zod schemas. Add <code>validate:&quot;required,email&quot;</code> to a field and the generator produces a matching schema.</p>
+<pre><code class="language-go">type CreateUserRequest struct {
+    Email string `json:&quot;email&quot; validate:&quot;required,email&quot;`
+    Age   int    `json:&quot;age&quot;   validate:&quot;gte=13&quot;`
+}
+</code></pre>
+<pre><code class="language-typescript">// Generated
+z.object({
+  email: z.string().email(),
+  age: z.number().int().gte(13),
+})
+</code></pre>
 <p>Configure the generated output, including custom type mapping (for example, if you have types with custom <code>MarshalJSON</code> methods).</p>
 <pre><code class="language-go">func GenConfig(g *tygorgen.Generator) *tygorgen.Generator {
     return g.
@@ -119,7 +143,7 @@ const client = createClient(registry, {
   validate: { request: true },
 });
 </code></pre>
-<hr>
+<h2>What&#39;s Next</h2>
 <p>Next up: dogfooding with real applications, building out documentation and examples, and refining the API.</p>
 <p>On the feature roadmap: bidirectional streaming via WebSockets, and a big focus on in-browser devtools. Inspecting RPCs and data flows without adding special instrumentation is a dream.</p>
 <p>The project is moving fast and the API is still changing. Please try it and give me feedback. Check out the <a href="https://github.com/broady/tygor">GitHub</a>.</p>
